@@ -1,0 +1,131 @@
+Week 14
+AIM: Develop an applet that receives an integer in one text field, and computes its factorial Value and
+returns it in another text field, when the button named “Compute” is clicked
+
+Program:
+import java.awt.*;
+import java.awt.event.*;
+import java.applet.Applet;
+/*<applet code=FactEvent width=400 height=400></applet>*/
+public class FactEvent extends Applet implements ActionListener
+{
+TextField t1,t2;
+int fact=1,m;
+Button b;
+String msg;
+Label l1,l2;
+FactEvent e;
+public void init()
+{ e=this;
+t1=new TextField(3);
+t2=new TextField(10);
+b=new Button("FIND FACTORIAL");
+l1=new Label("ENTER THE NUMBER");
+l2=new Label("RESULT");
+add(l1);
+add(t1);
+add(l2);
+add(t2);
+add(b);
+b.addActionListener(this);
+}
+public void actionPerformed(ActionEvent ae)
+{
+String str=t1.getText();
+if(str!="")
+{
+int num=Integer.parseInt(str);
+for(int i=1;i<=num;i++)
+
+{
+fact=fact*i;
+}
+msg="" +fact;
+t2.setText(msg);
+fact=1;
+}
+}
+}
+
+16.AIM: To display all drives in our system as a tree structure using JTree.
+Description:
+JTree class is used to create a hierarchical view of data, with one top main root node, its sub-root
+nodes and their children nodes. The user can expand or collapse the top main root node and its subroot nodes. When a node is selected from the JTree, a TreeSelectionEvent is generated, which is
+handled by implementing TreeSelectionListener interface. JTree is another lightweight
+component which extends JComponent class.
+Program:
+import java.io.File;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+public class FileBrowser implements Runnable
+{
+private DefaultMutableTreeNode root;
+private DefaultTreeModel treeModel;
+private JTree tree;
+// @Override
+public void run() {
+JFrame frame = new JFrame("File Browser");
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+File fileRoot = new File("C:/");
+root = new DefaultMutableTreeNode(new FileNode(fileRoot));
+treeModel = new DefaultTreeModel(root);
+tree = new JTree(treeModel);
+tree.setShowsRootHandles(true);
+JScrollPane scrollPane = new JScrollPane(tree);
+frame.add(scrollPane);
+frame.setLocationByPlatform(true);
+frame.setSize(640, 480);
+frame.setVisible(true);
+CreateChildNodes ccn = new CreateChildNodes(fileRoot, root);
+new Thread(ccn).start();
+}
+public static void main(String[] args) {
+SwingUtilities.invokeLater(new FileBrowser());
+}
+public class CreateChildNodes implements Runnable {
+private DefaultMutableTreeNode root;
+
+private File fileRoot;
+public CreateChildNodes(File fileRoot,
+DefaultMutableTreeNode root) {
+this.fileRoot = fileRoot;
+this.root = root;
+}
+// @Override
+public void run() {
+createChildren(fileRoot, root);
+}
+private void createChildren(File fileRoot,
+DefaultMutableTreeNode node) {
+File[] files = fileRoot.listFiles();
+if (files == null) return;
+for (File file : files) {
+DefaultMutableTreeNode childNode =
+new DefaultMutableTreeNode(new FileNode(file));
+node.add(childNode);
+if (file.isDirectory()) {
+createChildren(file, childNode);
+}
+}
+}
+}
+public class FileNode {
+private File file;
+public FileNode(File file) {
+this.file = file;
+}
+@Override
+public String toString() {
+String name = file.getName();
+if (name.equals("")) {
+return file.getAbsolutePath();
+} else {
+return name;
+}
+}
+}
+}
